@@ -1,4 +1,4 @@
-
+// START
 
 // CHECKING LOCAL STROAGE FOR PEOPLE KEY 
 var inLocalStorage = localStorage.getItem('People');
@@ -68,13 +68,15 @@ function login() {
     for (let i = 0; i < inLocalStorage.length; i++) {
         // IF INPUTED USERNAME IS FOUND IN LOCAL STOGAGE THEN USER IS LOGGED IN
         if (inputUsername == inLocalStorage[i].username && inputPassword == inLocalStorage[i].password) {
-            // document.getElementById("notexist").innerHTML = "Incorrect cridentials";
-            dashboardspan.innerHTML = "Go to dashboard"
+            
+            location.assign("dashboard.html")
             return
         }
 
-    } alert("INCORRECT CRIDENTIALS")
-    location.reload()
+    } 
+    alert("INCORRECT CRIDENTIALS")
+    console.log("Wrong cridentials");
+    // location.reload()
 }
 
 
@@ -269,8 +271,8 @@ function previewSales() {
             + existingSales[i].ammount + ' FCFA</td> <td class=debtdata>'
             + existingSales[i].debtLeft + ' FCFA</td>  <td> '
             + existingSales[i].day + '-' + '0' + existingSales[i].month + '-'
-            + existingSales[i].year + '</td> <td> ' + existingSales[i].hour + ':'
-            + existingSales[i].min + ' ' + ampm + '   </td> </tr>'
+            + existingSales[i].year + '</td> <td> ' + existingSales[i].hour + ':0'
+            + existingSales[i].min  +  ' ' + ampm + '   </td> </tr>'
 
     }
 
