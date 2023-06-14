@@ -68,15 +68,14 @@ function login() {
     for (let i = 0; i < inLocalStorage.length; i++) {
         // IF INPUTED USERNAME IS FOUND IN LOCAL STOGAGE THEN USER IS LOGGED IN
         if (inputUsername == inLocalStorage[i].username && inputPassword == inLocalStorage[i].password) {
-            
+
             location.assign("dashboard.html")
             return
         }
 
-    } 
+    }
     alert("INCORRECT CRIDENTIALS")
-    console.log("Wrong cridentials");
-    // location.reload()
+    location.reload()
 }
 
 
@@ -203,12 +202,14 @@ function performSales() {
 
             var remainingDebt = existingLoanOrders[i].ammount - productAmmount
         }
-        else if(sellerName == existingLoanOrders[i].customerName && productAmmount == existingLoanOrders[i].ammount) {
+        else if (sellerName == existingLoanOrders[i].customerName && productAmmount == existingLoanOrders[i].ammount) {
             var remainingDebt = productAmmount - existingLoanOrders[i].ammount
         }
         else if (sellerName == existingLoanOrders[i].customerName && productAmmount > existingLoanOrders[i].ammount) {
-            var remainingDebt = existingLoanOrders[i].ammount - productAmmount
-            
+            var zero = 1 - 1
+
+            var remainingDebt = zero
+
         }
 
         // FOR LOOP TO LOOP THROUGH ALL SALES MADE
@@ -221,18 +222,16 @@ function performSales() {
 
             } else if (sellerName == existingSales[i].Name && productAmmount > existingSales[i].debtLeft) {
 
-                var remainingDebt = "00 "
-
-
-                // document.getElementById("debtAlert").innerHTML = "Sorry, the price of the product you want to sell is morethan "+
-                // " your current loan. Kindly pay your debt to keep transacting!!"
-                // return
+                var zero = 1 - 1
+                var remainingDebt = zero
             }
 
 
         }
 
     }
+
+
 
 
     var newSale = {
@@ -272,7 +271,7 @@ function previewSales() {
             + existingSales[i].debtLeft + ' FCFA</td>  <td> '
             + existingSales[i].day + '-' + '0' + existingSales[i].month + '-'
             + existingSales[i].year + '</td> <td> ' + existingSales[i].hour + ':0'
-            + existingSales[i].min  +  ' ' + ampm + '   </td> </tr>'
+            + existingSales[i].min + ' ' + ampm + '   </td> </tr>'
 
     }
 
