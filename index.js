@@ -24,6 +24,23 @@ if (salesInLocalStorage == null) {
 }
 
 
+// FOR LOAN ORDER
+// FINDING THE LOAN ORDER DATA IN LOCAL STORAGE AND STORING IT IN A VARIABLE
+var existingLoanOrders = localStorage.getItem("Loan Orders")
+existingLoanOrders = JSON.parse(existingLoanOrders)
+// CHECKING IF THERE ARE ANY EXISTING LOAN ORDERS
+
+if (existingLoanOrders == null) {
+
+    var customersLoanOrder = [
+    ]
+    localStorage.setItem("Loan Orders", JSON.stringify(customersLoanOrder))
+
+}
+
+
+
+
 
 
 
@@ -50,7 +67,7 @@ function addUser() {
     }
 
     // THIS IS A JS FUNCTION TO RELOAD THE PAGE
-    location.reload()
+    location.assign("login.html")
 
 }
 
@@ -81,22 +98,12 @@ function login() {
 
 
 
-// FOR LOAN ORDER
-// FINDING THE LOAN ORDER DATA IN LOCAL STORAGE AND STORING IT IN A VARIABLE
-var existingLoanOrders = localStorage.getItem("Loan Orders")
-existingLoanOrders = JSON.parse(existingLoanOrders)
-// CHECKING IF THERE ARE ANY EXISTING LOAN ORDERS
-
-if (existingLoanOrders == null) {
-
-    var customersLoanOrder = [
-    ]
-    localStorage.setItem("Loan Orders", JSON.stringify(customersLoanOrder))
-
-}
 
 // FUNCTION TO ADD LOAN ORDER AFTER BUTTON IS CLICKED
 function loanOrder() {
+
+    var existingLoanOrders = localStorage.getItem("Loan Orders")
+    existingLoanOrders = JSON.parse(existingLoanOrders)
 
     salesInLocalStorage = JSON.parse(localStorage.getItem("Sales"))
 
@@ -171,6 +178,8 @@ function loanOrder() {
 
 }
 
+
+
 // DIISPLAYING LOAN ORDERS ON A TABLE
 function displayLoanOrders() {
     var existingLoanOrders = localStorage.getItem("Loan Orders")
@@ -237,14 +246,17 @@ function performSales() {
         if (sellerName == existingLoanOrders[i].customerName && productAmmount < existingLoanOrders[i].ammount) {
 
             var remainingDebt = existingLoanOrders[i].ammount - productAmmount
+
         }
         else if (sellerName == existingLoanOrders[i].customerName && productAmmount == existingLoanOrders[i].ammount) {
             var remainingDebt = productAmmount - existingLoanOrders[i].ammount
+
         }
         else if (sellerName == existingLoanOrders[i].customerName && productAmmount > existingLoanOrders[i].ammount) {
-            var zero = 1 - 1
+            // var zero = 1 - 1
 
-            var remainingDebt = zero
+            var remainingDebt = existingLoanOrders[i].ammount - productAmmount
+
         }
 
 
@@ -272,51 +284,9 @@ function performSales() {
 
 
 
-    // second for loop .. this is for a user that collected a new loan || looping through both sales and loans using a decrement for loop
-
-    for (let i = existingSales.length - 1; i > 0; i--) {
-        var sellerName = document.getElementById("sellerName").value
 
 
-        if (existingSales[i].Name.includes(sellerName) && existingSales[i].debtLeft == 0) {
-
-            for (let i = existingLoanOrders.length - 1; i > 0; i--) {
-
-                if (sellerName == existingLoanOrders[i].customerName && existingLoanOrders[i].ammount > 1) {
-
-                    var remainingDebt = existingLoanOrders[i].ammount
-                    remainingDebt = existingLoanOrders[i].ammount - productAmmount
-                    var newSale = {
-                        Name: sellerName, prodduct: sellerProduct,
-                        ammount: productAmmount, debtLeft: remainingDebt,
-                        year: currentYear, month: currentMonth,
-                        day: currentDay, hour: hours, min: mins, sec: secs
-                    }
-
-                    existingSales.push(newSale)
-                    existingSales = JSON.stringify(existingSales)
-                    localStorage.setItem("Sales", existingSales)
-
-                    location.reload()
-
-                    return
-                }
-
-
-            }
-
-
-        }
-
-
-    }
-
-
-
-
-
-
-// If the arguments in the two loops are not furfilled , the code continues and a sale is made 
+    // If the arguments in the two loops are not furfilled , the code continues and a sale is made 
 
     var newSale = {
         Name: sellerName, prodduct: sellerProduct,
@@ -368,3 +338,8 @@ function deleteSales() {
     location.reload()
 }
 
+
+
+function logoutUser() {
+    location.assign("login.html")
+}
