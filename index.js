@@ -98,6 +98,8 @@ if (existingLoanOrders == null) {
 // FUNCTION TO ADD LOAN ORDER AFTER BUTTON IS CLICKED
 function loanOrder() {
 
+    salesInLocalStorage = JSON.parse(localStorage.getItem("Sales"))
+
     // THIS IS TO GET THE DATE 
     var date = new Date()
     var currentYear = date.getFullYear()
@@ -113,6 +115,8 @@ function loanOrder() {
     var ammountNeeded = document.getElementById('ammount').value
     var customerAddress = document.getElementById('address').value
 
+
+
     // CREATING A NEW LOAN ORDER OBJECT WITH DATA FROM THE FORM
     var newLoanOrder = {
         customerName: Name, ammount: ammountNeeded,
@@ -120,12 +124,43 @@ function loanOrder() {
         year: currentYear, month: currentMonth,
         day: currentDay, hour: hours, min: mins, sec: secs
     }
+
+    // IF USER HAS PAID HIS DEBT HE CAN TAKE ANOTHER LOAN 
+    for (let i = 0; i < salesInLocalStorage.length; i++) {
+
+        if (salesInLocalStorage[i].Name.includes(Name) && salesInLocalStorage[i].debtLeft == 0) {
+            existingLoanOrders.push(newLoanOrder)
+            existingLoanOrders = JSON.stringify(existingLoanOrders)
+            localStorage.setItem("Loan Orders", existingLoanOrders)
+            location.reload()
+            return
+        }
+
+    }
+
+
+    // IF CUSTOMER STILL HAS A DEBT
+
+    for (let i = 0; i < salesInLocalStorage.length; i++) {
+
+        if (salesInLocalStorage[i].Name.includes(Name) && salesInLocalStorage[i].debtLeft > 1 && salesInLocalStorage[i].debtLeft != 0) {
+
+            debtAlert.innerHTML = "You have an unpaid debt <br> Kindly clear your debt in order to take a new loan "
+            return
+
+        }
+
+    }
+
+
+
     // CHECKING IF SOME SPECIFIC DATA IS INPUTED , IF YES  THEN LOAN ORDER IS MADE AND SAVED IN LOCAL STORAGE AS A STRING
     if (Name, tel, ammountNeeded, customerAddress) {
         existingLoanOrders.push(newLoanOrder)
         existingLoanOrders = JSON.stringify(existingLoanOrders)
         localStorage.setItem("Loan Orders", existingLoanOrders)
-    } else {
+    }
+    else {
         alert("you must fill in the information required")
     }
 
@@ -168,6 +203,7 @@ function displayLoanOrders() {
 function deleteOrders() {
     localStorage.removeItem("Loan Orders")
     location.reload()
+
 }
 
 
@@ -209,30 +245,78 @@ function performSales() {
             var zero = 1 - 1
 
             var remainingDebt = zero
+        }
+
+
+    }
+
+
+
+    // FOR LOOP TO LOOP THROUGH ALL SALES MADE
+    for (let i = 0; i < existingSales.length; i++) {
+
+        if (sellerName == existingSales[i].Name && existingSales[i].debtLeft > 0 && productAmmount <= existingSales[i].debtLeft) {
+
+            var remainingDebt = existingSales[i].debtLeft - productAmmount
+
 
         }
 
-        // FOR LOOP TO LOOP THROUGH ALL SALES MADE
-        for (let i = 0; i < existingSales.length; i++) {
+        else if (sellerName == existingSales[i].Name && productAmmount > existingSales[i].debtLeft) {
 
-            if (sellerName == existingSales[i].Name && existingSales[i].debtLeft > 0 && productAmmount <= existingSales[i].debtLeft) {
-
-                var remainingDebt = existingSales[i].debtLeft - productAmmount
-
-
-            } else if (sellerName == existingSales[i].Name && productAmmount > existingSales[i].debtLeft) {
-
-                var zero = 1 - 1
-                var remainingDebt = zero
-            }
-
-
+            var zero = 1 - 1
+            var remainingDebt = zero
         }
 
     }
 
 
 
+    // second for loop .. this is for a user that collected a new loan || looping through both sales and loans using a decrement for loop
+
+    for (let i = existingSales.length - 1; i > 0; i--) {
+        var sellerName = document.getElementById("sellerName").value
+
+
+        if (existingSales[i].Name.includes(sellerName) && existingSales[i].debtLeft == 0) {
+
+            for (let i = existingLoanOrders.length - 1; i > 0; i--) {
+
+                if (sellerName == existingLoanOrders[i].customerName && existingLoanOrders[i].ammount > 1) {
+
+                    var remainingDebt = existingLoanOrders[i].ammount
+                    remainingDebt = existingLoanOrders[i].ammount - productAmmount
+                    var newSale = {
+                        Name: sellerName, prodduct: sellerProduct,
+                        ammount: productAmmount, debtLeft: remainingDebt,
+                        year: currentYear, month: currentMonth,
+                        day: currentDay, hour: hours, min: mins, sec: secs
+                    }
+
+                    existingSales.push(newSale)
+                    existingSales = JSON.stringify(existingSales)
+                    localStorage.setItem("Sales", existingSales)
+
+                    location.reload()
+
+                    return
+                }
+
+
+            }
+
+
+        }
+
+
+    }
+
+
+
+
+
+
+// If the arguments in the two loops are not furfilled , the code continues and a sale is made 
 
     var newSale = {
         Name: sellerName, prodduct: sellerProduct,
