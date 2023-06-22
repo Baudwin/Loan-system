@@ -14,7 +14,6 @@ if (inLocalStorage == null) {
 
 
 
-
 // CHECKING IF THE KEY 'SALES' EXISTS IN LOCAL STORAGE
 // IF IT DOESNT EXIST A NEW VARIABLE IS CREATED AND SAVED TO LOCAL STORAGE WITH THE KEY 'SALES'
 var salesInLocalStorage = localStorage.getItem("Sales")
@@ -38,9 +37,14 @@ if (existingLoanOrders == null) {
 
 }
 
+// FOR REGISTERED CUSTOMERS
 
+var existingCustomers = localStorage.getItem("Customers")
 
-
+if (existingCustomers == null) {
+    var customer = []
+    localStorage.setItem("Customers", JSON.stringify(customer))
+}
 
 
 
@@ -61,13 +65,14 @@ function addUser() {
     if (newUsername && newPassword) {
         existingUsers.push(newUser)
         localStorage.setItem("People", JSON.stringify(existingUsers))
-        proceedtologin.innerHTML = "Proceed to login"
+        location.assign("login.html")
+
     } else {
         alert("Enter required information")
+        location.reload()
     }
 
     // THIS IS A JS FUNCTION TO RELOAD THE PAGE
-    location.assign("login.html")
 
 }
 
@@ -86,7 +91,7 @@ function login() {
         // IF INPUTED USERNAME IS FOUND IN LOCAL STOGAGE THEN USER IS LOGGED IN
         if (inputUsername == inLocalStorage[i].username && inputPassword == inLocalStorage[i].password) {
 
-            location.assign("dashboard.html")
+            location.assign("homepage.html")
             return
         }
 
@@ -96,11 +101,119 @@ function login() {
 }
 
 
+// REGISTER CUSTOMERS 
 
+function registerCustomer() {
+    var existingCustomers = localStorage.getItem("Customers")
+    existingCustomers = JSON.parse(existingCustomers)
+
+
+    var newCustomerName = document.getElementById("NewCustomerName").value
+    var newCustomerNumber = document.getElementById("NewCustomerNumber").value
+    var newCustomerAddress = document.getElementById("NewCustomerAddress").value
+
+    var newCustomer = { newName: newCustomerName, newNumber: newCustomerNumber, newAddress: newCustomerAddress }
+
+    if (newCustomerName && newCustomerNumber.length > 0 && newCustomerNumber.length == 9 && newCustomerAddress) {
+
+
+        existingCustomers.push(newCustomer)
+        localStorage.setItem("Customers", JSON.stringify(existingCustomers))
+
+    } else if (newCustomerNumber.length != 9) {
+        alert("incorrect phone number")
+    }
+    
+    location.reload()
+
+}
+
+
+
+function displayCustomers() {
+
+    var existingCustomers = localStorage.getItem("Customers")
+    existingCustomers = JSON.parse(existingCustomers)
+
+    for (let i = 0; i < existingCustomers.length; i++) {
+
+
+        customerTable.innerHTML += '<tr> <td> ' + existingCustomers[i].newName + ' </td>  <td> '
+            + existingCustomers[i].newNumber + ' </td>   <td> '
+            + existingCustomers[i].newAddress + '  </td>  <td> <!-- <button onclick="editCustomer(' + i + ')" class="btn btn-secondary btn-sm"> edit</button> --> '
+            + ' <button onclick="deleteCustomer(' + i + ')" class="btn btn-sm btn-danger"> delete customer</button></td></tr>'
+
+
+    }
+
+}
+
+// DELETE A CUSTOMER
+function deleteCustomer(i) {
+
+    var existingCustomers = localStorage.getItem("Customers")
+    existingCustomers = JSON.parse(existingCustomers)
+
+
+    var mappedCustomers = existingCustomers.map(existingCustomers => ({
+        newName: existingCustomers.newName,
+        newNumber: existingCustomers.newNumber,
+        newAddress: existingCustomers.newAddress
+    }))
+
+    mappedCustomers.splice(i, 1)
+    localStorage.setItem("Customers", JSON.stringify(mappedCustomers))
+
+    location.reload()
+}
+
+// EDIT CUSTOMER INFO
+
+// function editCustomer(i) {
+//    document.getElementById("regBtn").remove()
+//     updateBtn.innerHTML = "Update Customer Details"
+//    document.getElementById('updateBtn').classList.add("btn", "btn-primary")
+//     updateCustomerh2.innerHTML = "Update Customer Info"
+
+
+// }
+
+// UPDATE CUSTOMER INFO
+
+// function updateCustomer() {
+
+
+//     var existingCustomers = localStorage.getItem("Customers")
+//     existingCustomers = JSON.parse(existingCustomers)
+
+//     var newCustomerName = document.getElementById("NewCustomerName").value
+//     var newCustomerNumber = document.getElementById("NewCustomerNumber").value
+//     var newCustomerAddress = document.getElementById("NewCustomerAddress").value
+
+
+
+//     var mappedCustomers = existingCustomers.map(existingCustomers => ({
+//         newName: existingCustomers.newName,
+//         newNumber: existingCustomers.newNumber,
+//         newAddress: existingCustomers.newAddress
+//     }))
+
+//     mappedCustomers.splice(i, 1, { newName: newCustomerName, newNumber: newCustomerNumber, newAddress: newCustomerAddress })
+
+//     console.log(mappedCustomers);
+
+//         localStorage.setItem("Customers", JSON.stringify(mappedCustomers))
+
+//     location.reload()
+
+// }
 
 
 // FUNCTION TO ADD LOAN ORDER AFTER BUTTON IS CLICKED
 function loanOrder() {
+    var existingCustomers = localStorage.getItem("Customers")
+    existingCustomers = JSON.parse(existingCustomers)
+
 
     var existingLoanOrders = localStorage.getItem("Loan Orders")
     existingLoanOrders = JSON.parse(existingLoanOrders)
@@ -117,25 +230,32 @@ function loanOrder() {
     var secs = date.getSeconds()
 
     // GETTING THE DATA FROM THE FORM IN THE LOAN ORDER PAGE
-    var Name = document.getElementById('customerName').value
-    var tel = document.getElementById('number').value
+    var selectedName = document.getElementById("customerSelect").value
     var ammountNeeded = document.getElementById('ammount').value
-    var customerAddress = document.getElementById('address').value
-
 
 
     // CREATING A NEW LOAN ORDER OBJECT WITH DATA FROM THE FORM
-    var newLoanOrder = {
-        customerName: Name, ammount: ammountNeeded,
-        address: customerAddress, phoneNumber: tel,
-        year: currentYear, month: currentMonth,
-        day: currentDay, hour: hours, min: mins, sec: secs
+
+    for (let i = 0; i < existingCustomers.length; i++) {
+        if (selectedName == existingCustomers[i].newName) {
+
+            var newLoanOrder = {
+                customerName: selectedName, ammount: ammountNeeded,
+                address: existingCustomers[i].newAddress, phoneNumber: existingCustomers[i].newNumber,
+                year: currentYear, month: currentMonth,
+                day: currentDay, hour: hours, min: mins, sec: secs
+            }
+
+        }
+
     }
+
+
 
     // IF USER HAS PAID HIS DEBT HE CAN TAKE ANOTHER LOAN 
     for (let i = 0; i < salesInLocalStorage.length; i++) {
 
-        if (salesInLocalStorage[i].Name.includes(Name) && salesInLocalStorage[i].debtLeft == 0) {
+        if (salesInLocalStorage[i].Name.includes(selectedName) && salesInLocalStorage[i].debtLeft == 0) {
             existingLoanOrders.push(newLoanOrder)
             existingLoanOrders = JSON.stringify(existingLoanOrders)
             localStorage.setItem("Loan Orders", existingLoanOrders)
@@ -150,7 +270,7 @@ function loanOrder() {
 
     for (let i = 0; i < salesInLocalStorage.length; i++) {
 
-        if (salesInLocalStorage[i].Name.includes(Name) && salesInLocalStorage[i].debtLeft > 1 && salesInLocalStorage[i].debtLeft != 0) {
+        if (salesInLocalStorage[i].Name.includes(selectedName) && salesInLocalStorage[i].debtLeft > 1 && salesInLocalStorage[i].debtLeft != 0) {
 
             debtAlert.innerHTML = "You have an unpaid debt <br> Kindly clear your debt in order to take a new loan "
             return
@@ -160,9 +280,8 @@ function loanOrder() {
     }
 
 
-
     // CHECKING IF SOME SPECIFIC DATA IS INPUTED , IF YES  THEN LOAN ORDER IS MADE AND SAVED IN LOCAL STORAGE AS A STRING
-    if (Name, tel, ammountNeeded, customerAddress) {
+    if (selectedName, ammountNeeded) {
         existingLoanOrders.push(newLoanOrder)
         existingLoanOrders = JSON.stringify(existingLoanOrders)
         localStorage.setItem("Loan Orders", existingLoanOrders)
@@ -182,10 +301,20 @@ function loanOrder() {
 
 // DIISPLAYING LOAN ORDERS ON A TABLE
 function displayLoanOrders() {
+
+    var existingCustomers = localStorage.getItem("Customers")
+    existingCustomers = JSON.parse(existingCustomers)
+
     var existingLoanOrders = localStorage.getItem("Loan Orders")
     existingLoanOrders = JSON.parse(existingLoanOrders)
-    document.getElementById("loanCount").innerHTML = existingLoanOrders.length
     // THIS IS TO SHOW THE AMOUNT OF LOAN ORDERS CURRENTLY
+    document.getElementById("loanCount").innerHTML = existingLoanOrders.length
+
+    // display select items 
+    for (let i = 0; i < existingCustomers.length; i++) {
+        customerSelect.innerHTML += '<option> ' + existingCustomers[i].newName + ' </option>'
+    }
+
 
     // FOR LOOP TO LOOP THROUGH ALL EXISTING LOAN ORDERS 
     for (let i = 0; i < existingLoanOrders.length; i++) {
@@ -203,23 +332,56 @@ function displayLoanOrders() {
             + existingLoanOrders[i].address + '</td><td> '
             + existingLoanOrders[i].day + '-' + '0' + existingLoanOrders[i].month + '-'
             + existingLoanOrders[i].year + '</td> <td> ' + existingLoanOrders[i].hour + ':'
-            + existingLoanOrders[i].min + ' ' + ampm + '   </td> </tr>'
+            + existingLoanOrders[i].min + ' ' + ampm + '   </td> <td> <button  onclick="deleteLoan(' + i + ')" class="deleteBtn btn btn-sm  btn-danger" >Delete</button> </td> </tr>'
 
     }
 }
 
 // DELETING  LOAN ORDERs
-function deleteOrders() {
-    localStorage.removeItem("Loan Orders")
+function deleteLoan(i) {
+    var existingLoanOrders = localStorage.getItem("Loan Orders")
+    existingLoanOrders = JSON.parse(existingLoanOrders)
+
+    var mappedOrders = existingLoanOrders.map(existingLoanOrders => ({
+
+
+        customerName: existingLoanOrders.customerName,
+        phoneNumber: existingLoanOrders.phoneNumber,
+        ammount: existingLoanOrders.ammount,
+        address: existingLoanOrders.address,
+        day: existingLoanOrders.day,
+        month: existingLoanOrders.month,
+        year: existingLoanOrders.year,
+        hour: existingLoanOrders.hour,
+        min: existingLoanOrders.min
+
+
+    }))
+
+    mappedOrders.splice(i, 1)
+    localStorage.setItem("Loan Orders", JSON.stringify(mappedOrders))
+
     location.reload()
 
 }
 
+// delete all loan orders
+
+var deleteAllOrders = () => {
+    localStorage.removeItem("Loan Orders")
+    location.reload()
+}
 
 
 // FUNCTION TO PERFORM A SALE AFTER BUTTON IS CLICKED
 
 function performSales() {
+    var existingCustomers = localStorage.getItem("Customers")
+    existingCustomers = JSON.parse(existingCustomers)
+
+    var existingSales = localStorage.getItem("Sales")
+    existingSales = JSON.parse(existingSales)
+
 
     var date = new Date()
     var currentYear = date.getFullYear()
@@ -230,10 +392,7 @@ function performSales() {
     var secs = date.getSeconds()
 
 
-    var existingSales = localStorage.getItem("Sales")
-    existingSales = JSON.parse(existingSales)
-
-    var sellerName = document.getElementById("sellerName").value
+    var sellerName = document.getElementById("customerSelect").value
     var sellerProduct = document.getElementById("sellerProduct").value
     var productAmmount = document.getElementById("productAmmount").value
 
@@ -242,22 +401,35 @@ function performSales() {
     // FOR LOOP TO LOOP THROUGH ALL LOAN ORDERS MADE MADE
     for (let i = 0; i < existingLoanOrders.length; i++) {
 
-
         if (sellerName == existingLoanOrders[i].customerName && productAmmount < existingLoanOrders[i].ammount) {
 
             var remainingDebt = existingLoanOrders[i].ammount - productAmmount
+            var balance = 0
 
+            
         }
+
         else if (sellerName == existingLoanOrders[i].customerName && productAmmount == existingLoanOrders[i].ammount) {
             var remainingDebt = productAmmount - existingLoanOrders[i].ammount
+            var balance = remainingDebt
+
+            
+        }
+
+        else if (existingLoanOrders[i].customerName.includes(sellerName) && productAmmount > existingLoanOrders[i].ammount) {
+            var balance = productAmmount - existingLoanOrders[i].ammount
+            var remainingDebt = 0
 
         }
-        else if (sellerName == existingLoanOrders[i].customerName && productAmmount > existingLoanOrders[i].ammount) {
-            // var zero = 1 - 1
 
-            var remainingDebt = existingLoanOrders[i].ammount - productAmmount
 
-        }
+    }
+
+
+    if (productAmmount == "" && sellerProduct == "") {
+        alert("you must input required information")
+        location.reload()
+        return
 
 
     }
@@ -265,24 +437,83 @@ function performSales() {
 
 
     // FOR LOOP TO LOOP THROUGH ALL SALES MADE
-    for (let i = 0; i < existingSales.length; i++) {
+    for (let i = existingSales.length - 1; i >= 0; i--) {
+
+
+        // TESTING
+
+
+        if (existingSales[i].Name.includes(sellerName) && existingSales[i].Balance > 1 && existingSales[i].debtLeft == 0 && productAmmount > existingSales[i].debtLeft) {
+            for (let i = 0; i < existingLoanOrders.length; i++) {
+
+                if (existingLoanOrders[i].customerName.includes(sellerName)) {
+
+                    var remainingDebt = existingLoanOrders[i].ammount - productAmmount
+                    var balance = 0
+                    var newSale = {
+                        Name: sellerName, prodduct: sellerProduct,
+                        ammount: productAmmount, debtLeft: remainingDebt, Balance: balance,
+                        year: currentYear, month: currentMonth,
+                        day: currentDay, hour: hours, min: mins, sec: secs
+                    }
+                
+                    existingSales.push(newSale)
+                    // console.log(existingSales);
+                    existingSales = JSON.stringify(existingSales)
+                    localStorage.setItem("Sales", existingSales)
+                    location.reload()
+
+                    return
+                    
+                }
+                
+            }
+
+
+        }
+
+
+        // END OF TESTING
 
         if (sellerName == existingSales[i].Name && existingSales[i].debtLeft > 0 && productAmmount <= existingSales[i].debtLeft) {
 
             var remainingDebt = existingSales[i].debtLeft - productAmmount
 
-
+            var newSale = {
+                Name: sellerName, prodduct: sellerProduct,
+                ammount: productAmmount, debtLeft: remainingDebt, Balance: 0,
+                year: currentYear, month: currentMonth,
+                day: currentDay, hour: hours, min: mins, sec: secs
+            }
+            existingSales.push(newSale)
+            existingSales = JSON.stringify(existingSales)
+            localStorage.setItem("Sales", existingSales)
+            location.reload()
+            return
         }
+
 
         else if (sellerName == existingSales[i].Name && productAmmount > existingSales[i].debtLeft) {
 
             var zero = 1 - 1
             var remainingDebt = zero
+            var balance = productAmmount - existingSales[i].debtLeft
+
+            var newSale = {
+                Name: sellerName, prodduct: sellerProduct,
+                ammount: productAmmount, debtLeft: remainingDebt, Balance: balance,
+                year: currentYear, month: currentMonth,
+                day: currentDay, hour: hours, min: mins, sec: secs
+            }
+
+            existingSales.push(newSale)
+            existingSales = JSON.stringify(existingSales)
+            localStorage.setItem("Sales", existingSales)
+            location.reload()
+            return
         }
 
     }
-
-
 
 
 
@@ -290,12 +521,13 @@ function performSales() {
 
     var newSale = {
         Name: sellerName, prodduct: sellerProduct,
-        ammount: productAmmount, debtLeft: remainingDebt,
+        ammount: productAmmount, debtLeft: remainingDebt, Balance: balance,
         year: currentYear, month: currentMonth,
         day: currentDay, hour: hours, min: mins, sec: secs
     }
 
     existingSales.push(newSale)
+    // console.log(existingSales);
     existingSales = JSON.stringify(existingSales)
     localStorage.setItem("Sales", existingSales)
 
@@ -307,10 +539,21 @@ function performSales() {
 
 
 
-function previewSales() {
+var previewSales = () => {
+    var existingCustomers = localStorage.getItem("Customers")
+    existingCustomers = JSON.parse(existingCustomers)
+
     var existingSales = localStorage.getItem("Sales")
     existingSales = JSON.parse(existingSales)
 
+
+    // display select items 
+    for (let i = 0; i < existingCustomers.length; i++) {
+        customerSelect.innerHTML += '<option> ' + existingCustomers[i].newName + ' </option>'
+    }
+
+
+    // LOOP
     for (let i = 0; i < existingSales.length; i++) {
         var ampm = ""
         if (existingSales[i].hour > 12) {
@@ -322,10 +565,10 @@ function previewSales() {
         salesTable.innerHTML += '<tr> <td>' + existingSales[i].Name + '</td><td>'
             + existingSales[i].prodduct + '</td><td  class=prodCost >'
             + existingSales[i].ammount + ' FCFA</td> <td class=debtdata>'
-            + existingSales[i].debtLeft + ' FCFA</td>  <td> '
+            + existingSales[i].debtLeft + ' FCFA</td>  <td class=baldata> ' + existingSales[i].Balance + ' FCFA </td> <td> '
             + existingSales[i].day + '-' + '0' + existingSales[i].month + '-'
-            + existingSales[i].year + '</td> <td> ' + existingSales[i].hour + ':0'
-            + existingSales[i].min + ' ' + ampm + '   </td> </tr>'
+            + existingSales[i].year + '</td> <td> ' + existingSales[i].hour + ':'
+            + existingSales[i].min + ' ' + ampm + ' </td>  <td> <button  onclick="deleteSales(' + i + ')" class="deleteBtn btn-sm btn btn-danger" >Delete</button> </td> </tr>'
 
     }
 
@@ -333,13 +576,55 @@ function previewSales() {
 
 }
 
-function deleteSales() {
-    localStorage.removeItem("Sales")
-    location.reload()
+
+// SALES HISTORY 
+var salesHistory = localStorage.getItem("Sales History")
+
+if (salesHistory == null) {
+
+    localStorage.setItem("Sales History", JSON.stringify([]))
 }
 
 
 
-function logoutUser() {
-    location.assign("login.html")
+function deleteSales(i) {
+    var salesHistory = localStorage.getItem("Sales History")
+    salesHistory = JSON.parse(salesHistory)
+
+
+    var existingSales = localStorage.getItem("Sales")
+    existingSales = JSON.parse(existingSales)
+
+    var mappedSales = existingSales.map(existingSales => ({
+
+        Name: existingSales.Name,
+        prodduct: existingSales.prodduct,
+        ammount: existingSales.ammount,
+        debtLeft: existingSales.debtLeft,
+        Balance: existingSales.Balance,
+        day: existingSales.day,
+        month: existingSales.month,
+        year: existingSales.year,
+        hour: existingSales.hour,
+        min: existingSales.min
+
+
+    }))
+
+
+
+    var deletedSales = mappedSales.splice(i, 1)
+    localStorage.setItem("Sales", JSON.stringify(mappedSales))
+
+
+    salesHistory.push(deletedSales)
+    localStorage.setItem("Sales History", JSON.stringify(salesHistory))
+
+    location.reload()
+}
+
+
+function deleteAllSales() {
+    localStorage.removeItem("Sales")
+    location.reload()
 }

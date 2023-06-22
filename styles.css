@@ -23,10 +23,10 @@ border: 1px solid;
 }
 table{
     width: 60rem;
-    /* margin: 100px; */
     margin-bottom: 70px ;
     margin-left: 20rem;
 }
+
 td{
     border: 1px solid;
 
@@ -48,5 +48,72 @@ td{
 .debtAlert{
     color: red;
 }
+/* .form-select{
 
+    width: 40rem;
+    margin-left: 30px;
+} */
 
+.baldata{
+    color: rgb(82, 144, 99);
+}
+
+.deleteBtn{
+    border: 1px solid;
+    border-radius: 5px;
+}
+.home{
+    background-image: url("image\Cocoa-5.jpg");
+    width: 200px;
+    /* background-color: red; */
+}
+
+.image{
+    width:96rem;
+    height: 46.5rem;
+    opacity: 0.7;
+}
+
+input{
+    width: 200px;
+}
+
+.space-margin{
+    margin: 0 80px 0 80px;
+}
+.addloan{
+    text-align: center;
+    margin-top: 20px;
+}
+.sales{
+    text-align: center;
+    margin-top: 20px;
+}
+
+.register{
+    text-align: center;
+    margin-top: 20px;
+}
+
+.h1{
+    position: absolute;
+    text-align: center;
+    margin-left: 440px;
+    top: 120px;
+    font-size: larger;
+}
+.divh1{
+    color: black;
+    font-style: italic;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    
+}
+
+.intro{
+    position: absolute;
+    text-align: center;
+    margin-left: 480px;
+    top: 180px;
+    font-size: larger;
+    color: rgba(70, 62, 62, 0.918);
+}
